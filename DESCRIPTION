@@ -1,14 +1,11 @@
 Package: ugametrics
-Title: Regression Adjustment Estimation
+Title: Tools for ECON 4750
 Version: 0.1.0
 Authors@R:
-    person("User", "Name", , "user@example.com", role = c("aut", "cre"))
-Description: Provides a formula interface for regression adjustment estimation
-    to estimate the average treatment effect on the treated (ATT) for a binary
-    treatment under the unconfoundedness assumption (selection on observables).
-    This package wraps the DRDID::reg_did_panel() function for cross-sectional
-    data by implementing outcome regression on the control group and predicting
-    counterfactual outcomes for the treated group.
+    person("Brantly", "Callaway", , "brantly.callaway@uga.edu", role = c("aut", "cre"))
+Description: A collection of tools and utilities developed for the ECON 4750
+    course at the University of Georgia. Includes methods for regression
+    adjustment.
 License: GPL (>= 3) + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -1,0 +1,38 @@
+---
+title: "ugametrics"
+format: gfm
+---
+
+Tools for ECON 4750 at the University of Georgia.
+
+## Installation
+
+You can install ugametrics from GitHub using devtools:
+
+```r
+devtools::install_github("bcallaway11/ugametrics")
+```
+
+## Usage
+
+The main function in this package is `reg_adj()`, which implements regression adjustment estimation for binary treatment effects.
+
+### Basic Example
+
+```{r}
+#| eval: true
+library(ugametrics)
+
+# Estimate treatment effect with covariate adjustment
+result <- reg_adj(mpg ~ am, xformula = ~hp + wt, data = mtcars)
+print(result)
+summary(result)
+
+# Unadjusted comparison
+result_simple <- reg_adj(mpg ~ am, data = mtcars)
+print(result_simple)
+```
+
+## License
+
+GPL (>= 3)

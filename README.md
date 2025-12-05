@@ -1,67 +1,127 @@
 # ugametrics
 
-Regression Adjustment Estimation for Binary Treatment Effects
 
-## Overview
-
-`ugametrics` provides a formula interface for regression adjustment estimation to estimate the average treatment effect on the treated (ATT) under the unconfoundedness assumption (selection on observables).
-
-The package implements outcome regression by:
-1. Estimating a regression model using the control group
-2. Predicting counterfactual outcomes for the treated group
-3. Computing the ATT as the difference between observed and predicted outcomes
-
-This approach requires the assumption that all confounders are observed and included in the covariate adjustment.
+Tools for ECON 4750 at the University of Georgia.
 
 ## Installation
 
-You can install the development version of ugametrics from a local source:
+You can install ugametrics from GitHub using devtools:
 
-```r
-# Install from local directory
-install.packages("/path/to/ugametrics", repos = NULL, type = "source")
-
-# Or using devtools
-devtools::install_local("/path/to/ugametrics")
+``` r
+devtools::install_github("bcallaway11/ugametrics")
 ```
 
 ## Usage
 
-### Basic Example with Covariates
+The main function in this package is `reg_adj()`, which implements
+regression adjustment estimation for binary treatment effects.
 
-```r
+### Basic Example
+
+``` r
 library(ugametrics)
 
-# Estimate ATT with covariate adjustment
-# Outcome: mpg, Treatment: am (transmission type)
-# Covariates: hp (horsepower) and wt (weight)
+# Estimate treatment effect with covariate adjustment
 result <- reg_adj(mpg ~ am, xformula = ~hp + wt, data = mtcars)
 print(result)
+```
+
+
+    Call:
+    reg_adj(formula = mpg ~ am, xformula = ~hp + wt, data = mtcars)
+    ------------------------------------------------------------------
+     Regression Adjustment Estimator for the ATT:
+
+     Identification: Unconfoundedness (Selection on Observables)
+
+       ATT     Std. Error  t value    Pr(>|t|)  [95% Conf. Interval]
+         3.3566       1.2444     2.697        0.007      0.9175     5.7957
+    ------------------------------------------------------------------
+     Sample size: N = 32
+     Treated units: 13
+     Control units: 19
+    ------------------------------------------------------------------
+     Covariates: (Intercept), hp, wt
+     Estimation method: OLS
+     Standard errors: Analytic (influence function)
+    ------------------------------------------------------------------
+
+``` r
 summary(result)
 ```
 
-### Example without Covariates
 
-```r
-# Estimate ATT without covariate adjustment (intercept only)
+    Call:
+    reg_adj(formula = mpg ~ am, xformula = ~hp + wt, data = mtcars)
+
+    ==================================================================
+     Regression Adjustment Estimator for the ATT
+    ==================================================================
+
+    Identification Assumption:
+      Unconfoundedness (Selection on Observables)
+      All confounders must be observed and included in covariates
+
+    ------------------------------------------------------------------
+    Estimate:
+    ------------------------------------------------------------------
+      ATT estimate:            3.3566
+      Standard error:          1.2444
+      t-statistic:              2.697
+      p-value:                 0.0070
+      95% CI:              [   0.9175,    5.7957]
+
+    ------------------------------------------------------------------
+    Sample:
+    ------------------------------------------------------------------
+      Total observations:          32
+      Treated units:               13 (40.6%)
+      Control units:               19 (59.4%)
+
+    ------------------------------------------------------------------
+    Specification:
+    ------------------------------------------------------------------
+      Formula:            mpg ~ am
+      Covariates:         ~hp + wt
+
+      Included covariates: (Intercept), hp, wt
+      Number of covariates: 3
+
+    ------------------------------------------------------------------
+    Method:
+    ------------------------------------------------------------------
+      Estimation:          Outcome regression (OLS)
+      Standard errors:     Analytic (influence function)
+      Inference:           Asymptotic (non-bootstrap)
+
+    ==================================================================
+
+``` r
+# Unadjusted comparison
 result_simple <- reg_adj(mpg ~ am, data = mtcars)
 print(result_simple)
 ```
 
-## Important Note
 
-The `mtcars` examples above are for illustration purposes only and should not be interpreted as causal estimates. The unconfoundedness assumption requires that all confounders affecting both treatment assignment and the outcome are observed and included in the model.
+    Call:
+    reg_adj(formula = mpg ~ am, data = mtcars)
+    ------------------------------------------------------------------
+     Regression Adjustment Estimator for the ATT:
 
-## Methodology
+     Identification: Unconfoundedness (Selection on Observables)
 
-The package wraps `DRDID::reg_did_panel()` for cross-sectional data by:
-- Setting the pre-treatment outcome to zero (y0 = 0)
-- Using the post-treatment outcome as y1
-- Estimating an outcome regression model on the control group
-- Computing the ATT via regression adjustment
-
-**Key Assumption**: Unconfoundedness (selection on observables) - all variables that jointly affect treatment assignment and potential outcomes must be included in the covariate adjustment.
+       ATT     Std. Error  t value    Pr(>|t|)  [95% Conf. Interval]
+         7.2449       1.8825     3.849        0.000      3.5553    10.9346
+    ------------------------------------------------------------------
+     Sample size: N = 32
+     Treated units: 13
+     Control units: 19
+    ------------------------------------------------------------------
+     Covariates: Intercept only (unadjusted estimator)
+     Estimation method: OLS
+     Standard errors: Analytic (influence function)
+    ------------------------------------------------------------------
 
 ## License
 
-GPL (>= 3)
+GPL (\>= 3)
