@@ -25,11 +25,11 @@ print.reg_adj <- function(x, ...) {
 
     # Create formatted output
     result_line <- sprintf(
-        "  %9.4f %12.4f %9.3f %12.3f  %10.4f %10.4f\n",
+        "  %9.4f %12.4f %9.3f %12.4f  %10.4f %10.4f\n",
         x$ATT, x$se, t_val, p_val, x$lci, x$uci
     )
 
-    cat("   ATT     Std. Error  t value    Pr(>|t|)  [95% Conf. Interval]\n")
+    cat("    ATT      Std. Error  t value    Pr(>|t|)  [95% Conf. Interval]\n")
     cat(result_line)
     cat("------------------------------------------------------------------\n")
 
