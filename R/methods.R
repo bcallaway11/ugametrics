@@ -24,13 +24,11 @@ print.reg_adj <- function(x, ...) {
     p_val <- 2 * (1 - pnorm(abs(t_val)))
 
     # Create formatted output
-    result_line <- sprintf(
+    cat("     ATT       Std. Error  t value     Pr(>|t|)  [95% Conf. Interval]\n")
+    cat(sprintf(
         "  %9.4f %12.4f %9.3f %12.4f  %10.4f %10.4f\n",
         x$ATT, x$se, t_val, p_val, x$lci, x$uci
-    )
-
-    cat("    ATT      Std. Error  t value    Pr(>|t|)  [95% Conf. Interval]\n")
-    cat(result_line)
+    ))
     cat("------------------------------------------------------------------\n")
 
     # Sample information

@@ -34,8 +34,8 @@ print(result)
 
      Identification: Unconfoundedness (Selection on Observables)
 
-       ATT     Std. Error  t value    Pr(>|t|)  [95% Conf. Interval]
-         3.3566       1.2444     2.697        0.007      0.9175     5.7957
+         ATT       Std. Error  t value     Pr(>|t|)  [95% Conf. Interval]
+         3.3566       1.2444     2.697       0.0070      0.9175     5.7957
     ------------------------------------------------------------------
      Sample size: N = 32
      Treated units: 13
@@ -110,8 +110,8 @@ print(result_simple)
 
      Identification: Unconfoundedness (Selection on Observables)
 
-       ATT     Std. Error  t value    Pr(>|t|)  [95% Conf. Interval]
-         7.2449       1.8825     3.849        0.000      3.5553    10.9346
+         ATT       Std. Error  t value     Pr(>|t|)  [95% Conf. Interval]
+         7.2449       1.8825     3.849       0.0001      3.5553    10.9346
     ------------------------------------------------------------------
      Sample size: N = 32
      Treated units: 13
