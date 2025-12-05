@@ -1,0 +1,22 @@
+Package: ugametrics
+Title: Regression Adjustment Estimation
+Version: 0.1.0
+Authors@R: 
+    person("User", "Name", , "user@example.com", role = c("aut", "cre"))
+Description: Provides a formula interface for regression adjustment estimation
+    to estimate the average treatment effect on the treated (ATT) for a binary
+    treatment under the unconfoundedness assumption (selection on observables).
+    This package wraps the DRDID::reg_did_panel() function for cross-sectional
+    data by implementing outcome regression on the control group and predicting
+    counterfactual outcomes for the treated group.
+License: GPL (>= 3) + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends: R (>= 3.5.0)
+Imports: DRDID, stats
+NeedsCompilation: no
+Packaged: 2025-12-05 18:48:02 UTC; bmc43193
+Author: User Name [aut, cre]
+Maintainer: User Name <user@example.com>
+Built: R 4.4.1; ; 2025-12-05 18:48:05 UTC; unix

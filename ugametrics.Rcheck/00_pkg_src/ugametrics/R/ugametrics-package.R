@@ -1,0 +1,56 @@
+#' @keywords internal
+"_PACKAGE"
+
+#' ugametrics: Regression Adjustment Estimation
+#'
+#' @description
+#' The ugametrics package provides a formula interface for regression adjustment
+#' estimation to estimate the average treatment effect on the treated (ATT) for
+#' a binary treatment under the unconfoundedness assumption.
+#'
+#' @details
+#' The main function \code{\link{reg_adj}} implements outcome regression by:
+#' \enumerate{
+#'   \item Estimating a regression model of the outcome on covariates using only
+#'         the control group
+#'   \item Predicting counterfactual outcomes for the treated group using the
+#'         estimated model
+#'   \item Computing the ATT as the average difference between observed outcomes
+#'         and predicted counterfactual outcomes for the treated group
+#' }
+#'
+#' This approach wraps the \code{DRDID::reg_did_panel()} function for
+#' cross-sectional data (no panel structure required).
+#'
+#' @section Key Assumption:
+#' \strong{Unconfoundedness (Selection on Observables):} All variables that
+#' jointly affect treatment assignment and potential outcomes must be observed
+#' and included in the covariate adjustment formula. This is a strong assumption
+#' that cannot be tested from the data alone.
+#'
+#' @section Main Function:
+#' \itemize{
+#'   \item \code{\link{reg_adj}}: Estimate ATT using regression adjustment
+#' }
+#'
+#' @section Methods:
+#' \itemize{
+#'   \item \code{\link{print.reg_adj}}: Print results
+#'   \item \code{\link{summary.reg_adj}}: Detailed summary of results
+#' }
+#'
+#' @examples
+#' # Basic example with covariates
+#' result <- reg_adj(mpg ~ am, xformula = ~ hp + wt, data = mtcars)
+#' print(result)
+#'
+#' # Example without covariates
+#' result_simple <- reg_adj(mpg ~ am, data = mtcars)
+#' summary(result_simple)
+#'
+#' @references
+#' Sant'Anna, P.H.C. and Zhao, J. (2020). "Doubly Robust Difference-in-Differences
+#' Estimators." Journal of Econometrics, Vol. 219 (1), pp. 101-122.
+#'
+#' @name ugametrics-package
+NULL

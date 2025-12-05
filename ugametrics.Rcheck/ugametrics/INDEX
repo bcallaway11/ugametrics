@@ -1,0 +1,5 @@
+print.reg_adj           Print Method for reg_adj Objects
+print.summary.reg_adj   Print Method for summary.reg_adj Objects
+reg_adj                 Regression Adjustment Estimation for Binary
+                        Treatment Effects
+summary.reg_adj         Summary Method for reg_adj Objects
