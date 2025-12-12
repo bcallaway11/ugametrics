@@ -3,3 +3,5 @@
 ^\.git$
 ^\.gitignore$
 ^README\.Rmd$
+^README\.qmd$
+^IMPLEMENTATION_SUMMARY\.txt$

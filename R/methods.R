@@ -14,7 +14,7 @@ print.reg_adj <- function(x, ...) {
     cat("Call:\n")
     print(x$original_call)
     cat("------------------------------------------------------------------\n")
-    cat(" Regression Adjustment Estimator for the ATT:\n")
+    cat(" Regression Adjustment Estimator:\n")
     cat("\n")
     cat(" Identification: Unconfoundedness (Selection on Observables)\n")
     cat("\n")

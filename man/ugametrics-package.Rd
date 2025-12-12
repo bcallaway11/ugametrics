@@ -4,16 +4,16 @@
 \name{ugametrics-package}
 \alias{ugametrics}
 \alias{ugametrics-package}
-\title{ugametrics: Regression Adjustment Estimation}
+\title{ugametrics: Tools for ECON 4750}
 \description{
-Provides a formula interface for regression adjustment estimation to estimate the average treatment effect on the treated (ATT) for a binary treatment under the unconfoundedness assumption (selection on observables). This package wraps the DRDID::reg_did_panel() function for cross-sectional data by implementing outcome regression on the control group and predicting counterfactual outcomes for the treated group.
+A collection of tools and utilities developed for the ECON 4750 course at the University of Georgia. Includes methods for regression adjustment.
 
 The ugametrics package provides a formula interface for regression adjustment
 estimation to estimate the average treatment effect on the treated (ATT) for
 a binary treatment under the unconfoundedness assumption.
 }
 \details{
-The main function \code{\link{reg_adj}} implements outcome regression by:
+The main function \code{\link{reg_adj_att}} implements outcome regression by:
 \enumerate{
 \item Estimating a regression model of the outcome on covariates using only
 the control group
@@ -37,7 +37,8 @@ that cannot be tested from the data alone.
 \section{Main Function}{
 
 \itemize{
-\item \code{\link{reg_adj}}: Estimate ATT using regression adjustment
+\item \code{\link{reg_adj_att}}: Estimate ATT using regression adjustment
+\item \code{\link{reg_adj_ate}}: Estimate ATE using regression adjustment
 }
 }
 
@@ -51,11 +52,11 @@ that cannot be tested from the data alone.
 
 \examples{
 # Basic example with covariates
-result <- reg_adj(mpg ~ am, xformula = ~ hp + wt, data = mtcars)
+result <- reg_adj_att(mpg ~ am, xformula = ~ hp + wt, data = mtcars)
 print(result)
 
 # Example without covariates
-result_simple <- reg_adj(mpg ~ am, data = mtcars)
+result_simple <- reg_adj_att(mpg ~ am, data = mtcars)
 summary(result_simple)
 
 }
@@ -64,7 +65,7 @@ Sant'Anna, P.H.C. and Zhao, J. (2020). "Doubly Robust Difference-in-Differences
 Estimators." Journal of Econometrics, Vol. 219 (1), pp. 101-122.
 }
 \author{
-\strong{Maintainer}: User Name \email{user@example.com}
+\strong{Maintainer}: Brantly Callaway \email{brantly.callaway@uga.edu}
 
 }
 \keyword{internal}

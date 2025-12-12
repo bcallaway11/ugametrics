@@ -1,4 +1,4 @@
-#' Regression Adjustment Estimation for Binary Treatment Effects
+#' Regression Adjustment Estimation for Binary Treatment Effects (ATT)
 #'
 #' Estimates the average treatment effect on the treated (ATT) using regression
 #' adjustment under the unconfoundedness assumption. This function implements
@@ -14,8 +14,7 @@
 #' @param data A data frame containing the variables in the model.
 #'
 #' @details
-#' This function wraps \code{DRDID::reg_did_panel()} for cross-sectional data
-#' by setting the pre-treatment outcome (y0) to zero. The method:
+#' The method:
 #' \enumerate{
 #'   \item Runs OLS regression of the outcome on covariates using control group data
 #'   \item Predicts counterfactual outcomes for the treated group
@@ -53,20 +52,17 @@
 #'
 #' @examples
 #' # Example with covariates (illustrative only, not causal)
-#' result <- reg_adj(mpg ~ am, xformula = ~ hp + wt, data = mtcars)
+#' result <- reg_adj_att(mpg ~ am, xformula = ~ hp + wt, data = mtcars)
 #' print(result)
 #' summary(result)
 #'
 #' # Example without covariates
-#' result_simple <- reg_adj(mpg ~ am, data = mtcars)
+#' result_simple <- reg_adj_att(mpg ~ am, data = mtcars)
 #' print(result_simple)
 #'
-#' @seealso \code{\link[DRDID]{reg_did_panel}}
-#'
-#' @importFrom DRDID reg_did_panel
-#' @importFrom stats model.frame model.matrix model.response na.omit pnorm
+#' @importFrom stats model.frame model.matrix model.response na.omit pnorm qnorm var
 #' @export
-reg_adj <- function(formula, xformula = NULL, data) {
+reg_adj_att <- function(formula, xformula = NULL, data) {
     # Validate inputs
     if (missing(data)) {
         stop("'data' argument is required")
@@ -144,33 +140,56 @@ reg_adj <- function(formula, xformula = NULL, data) {
         }
     }
 
-    # Create y0 as vector of zeros
+    # Manual ATT via outcome regression on controls
     n <- length(Y)
-    y0 <- rep(0, n)
+    Xc <- X[D == 0, , drop = FALSE]
+    Yc <- Y[D == 0]
+    Xt <- X[D == 1, , drop = FALSE]
+    Yt <- Y[D == 1]
 
-    # Call DRDID::reg_did_panel
-    result <- DRDID::reg_did_panel(
-        y1 = Y,
-        y0 = y0,
-        D = D,
-        covariates = X,
-        i.weights = NULL,
-        boot = FALSE,
-        boot.type = "weighted",
-        nboot = NULL,
-        inffunc = FALSE
+    # OLS on controls: beta_hat = (Xc'Xc)^{-1} Xc'Yc
+    XtX <- crossprod(Xc)
+    XtY <- crossprod(Xc, Yc)
+    beta_hat <- solve(XtX, XtY)
+    yhat_t <- as.vector(Xt %*% beta_hat)
+    ATT_manual <- mean(Yt - yhat_t)
+
+    # Standard error accounting for beta_hat estimated on controls
+    resid_t <- Yt - yhat_t
+    var1 <- var(resid_t) / n_treated
+    resid_c <- Yc - as.vector(Xc %*% beta_hat)
+    sigma2_c <- sum(resid_c^2) / n_control
+    XtX_inv <- solve(XtX)
+    mXt <- colMeans(Xt)
+    var2 <- as.numeric(t(mXt) %*% (sigma2_c * XtX_inv) %*% mXt)
+    se_att <- sqrt(var1 + var2)
+    z <- qnorm(0.975)
+    lci <- ATT_manual - z * se_att
+    uci <- ATT_manual + z * se_att
+    pval <- 2 * (1 - pnorm(abs(ATT_manual / se_att)))
+
+    # Build return object consistent with drdid
+    out <- list(
+        ATT = ATT_manual,
+        se = se_att,
+        uci = uci,
+        lci = lci,
+        pval = pval,
+        boots = NULL,
+        att.inf.func = NULL,
+        call.param = list(),
+        argu = list()
     )
 
-    # Add custom class and store additional information
-    result$formula <- formula
-    result$xformula <- xformula
-    result$covariate_names <- covariate_names
-    result$n_obs <- n
-    result$n_treated <- n_treated
-    result$n_control <- n_control
-    result$original_call <- call
+    # Add custom fields
+    out$formula <- formula
+    out$xformula <- xformula
+    out$covariate_names <- covariate_names
+    out$n_obs <- n
+    out$n_treated <- n_treated
+    out$n_control <- n_control
+    out$original_call <- call
 
-    class(result) <- c("reg_adj", "drdid")
-
-    return(result)
+    class(out) <- c("reg_adj", "drdid")
+    return(out)
 }

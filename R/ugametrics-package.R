@@ -9,7 +9,7 @@
 #' a binary treatment under the unconfoundedness assumption.
 #'
 #' @details
-#' The main function \code{\link{reg_adj}} implements outcome regression by:
+#' The main function \code{\link{reg_adj_att}} implements outcome regression by:
 #' \enumerate{
 #'   \item Estimating a regression model of the outcome on covariates using only
 #'         the control group
@@ -30,7 +30,8 @@
 #'
 #' @section Main Function:
 #' \itemize{
-#'   \item \code{\link{reg_adj}}: Estimate ATT using regression adjustment
+#'   \item \code{\link{reg_adj_att}}: Estimate ATT using regression adjustment
+#'   \item \code{\link{reg_adj_ate}}: Estimate ATE using regression adjustment
 #' }
 #'
 #' @section Methods:
@@ -41,11 +42,11 @@
 #'
 #' @examples
 #' # Basic example with covariates
-#' result <- reg_adj(mpg ~ am, xformula = ~ hp + wt, data = mtcars)
+#' result <- reg_adj_att(mpg ~ am, xformula = ~ hp + wt, data = mtcars)
 #' print(result)
 #'
 #' # Example without covariates
-#' result_simple <- reg_adj(mpg ~ am, data = mtcars)
+#' result_simple <- reg_adj_att(mpg ~ am, data = mtcars)
 #' summary(result_simple)
 #'
 #' @references
