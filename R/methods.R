@@ -10,11 +10,12 @@
 #' @importFrom stats pnorm
 #' @export
 print.reg_adj <- function(x, ...) {
+    estimand <- if (!is.null(x$estimand)) x$estimand else "ATT"
     cat("\n")
     cat("Call:\n")
     print(x$original_call)
     cat("------------------------------------------------------------------\n")
-    cat(" Regression Adjustment Estimator:\n")
+    cat(sprintf(" Regression Adjustment Estimator for the %s:\n", estimand))
     cat("\n")
     cat(" Identification: Unconfoundedness (Selection on Observables)\n")
     cat("\n")
@@ -24,7 +25,7 @@ print.reg_adj <- function(x, ...) {
     p_val <- 2 * (1 - pnorm(abs(t_val)))
 
     # Create formatted output
-    cat("     ATT       Std. Error  t value     Pr(>|t|)  [95% Conf. Interval]\n")
+    cat(sprintf("     %s       Std. Error  t value     Pr(>|t|)  [95%% Conf. Interval]\n", estimand))
     cat(sprintf(
         "  %9.4f %12.4f %9.3f %12.4f  %10.4f %10.4f\n",
         x$ATT, x$se, t_val, p_val, x$lci, x$uci
@@ -77,6 +78,7 @@ summary.reg_adj <- function(object, ...) {
     t_val <- object$ATT / object$se
     p_val <- 2 * (1 - pnorm(abs(t_val)))
 
+    estimand <- if (!is.null(object$estimand)) object$estimand else "ATT"
     # Create summary object
     out <- list(
         call = object$original_call,
@@ -90,7 +92,8 @@ summary.reg_adj <- function(object, ...) {
         n_control = object$n_control,
         covariates = object$covariate_names,
         formula = object$formula,
-        xformula = object$xformula
+        xformula = object$xformula,
+        estimand = estimand
     )
 
     class(out) <- "summary.reg_adj"
@@ -113,8 +116,9 @@ print.summary.reg_adj <- function(x, ...) {
     cat("Call:\n")
     print(x$call)
     cat("\n")
+    estimand <- if (!is.null(x$estimand)) x$estimand else "ATT"
     cat("==================================================================\n")
-    cat(" Regression Adjustment Estimator for the ATT\n")
+    cat(sprintf(" Regression Adjustment Estimator for the %s\n", estimand))
     cat("==================================================================\n")
     cat("\n")
     cat("Identification Assumption:\n")
@@ -124,7 +128,7 @@ print.summary.reg_adj <- function(x, ...) {
     cat("------------------------------------------------------------------\n")
     cat("Estimate:\n")
     cat("------------------------------------------------------------------\n")
-    cat(sprintf("  ATT estimate:        %10.4f\n", x$ATT))
+    cat(sprintf("  %s estimate:        %10.4f\n", estimand, x$ATT))
     cat(sprintf("  Standard error:      %10.4f\n", x$se))
     cat(sprintf("  t-statistic:         %10.3f\n", x$t_value))
     cat(sprintf("  p-value:             %10.4f\n", x$p_value))

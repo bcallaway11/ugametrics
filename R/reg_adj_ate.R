@@ -98,6 +98,7 @@ reg_adj_ate <- function(formula, xformula = NULL, data) {
     out$n_treated <- sum(D == 1)
     out$n_control <- sum(D == 0)
     out$original_call <- call
+    out$estimand <- "ATE"
     class(out) <- c("reg_adj", "drdid")
     return(out)
 }

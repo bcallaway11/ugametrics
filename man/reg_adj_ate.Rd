@@ -22,7 +22,8 @@ An object of class \code{c("reg_adj", "drdid")} aligned with DRDID outputs.
 }
 \description{
 Estimates the average treatment effect (ATE) using regression adjustment
-under unconfoundedness. Outcome regression is estimated on the control group
-and used to predict counterfactual outcomes for both treated and control
-units, averaging appropriately.
+under unconfoundedness. Outcome regression is estimated separately for the
+treated and control groups, and counterfactual outcomes are predicted for
+the full sample from each model. The ATE is the average difference between
+these predicted potential outcomes.
 }

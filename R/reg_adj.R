@@ -189,6 +189,7 @@ reg_adj_att <- function(formula, xformula = NULL, data) {
     out$n_treated <- n_treated
     out$n_control <- n_control
     out$original_call <- call
+    out$estimand <- "ATT"
 
     class(out) <- c("reg_adj", "drdid")
     return(out)
