@@ -30,7 +30,7 @@ print(result)
     Call:
     reg_adj_att(formula = mpg ~ am, xformula = ~hp + wt, data = mtcars)
     ------------------------------------------------------------------
-     Regression Adjustment Estimator:
+     Regression Adjustment Estimator for the ATT:
 
      Identification: Unconfoundedness (Selection on Observables)
 
@@ -106,7 +106,7 @@ print(result_simple)
     Call:
     reg_adj_att(formula = mpg ~ am, data = mtcars)
     ------------------------------------------------------------------
-     Regression Adjustment Estimator:
+     Regression Adjustment Estimator for the ATT:
 
      Identification: Unconfoundedness (Selection on Observables)
 
@@ -134,11 +134,11 @@ print(result_ate)
     Call:
     reg_adj_ate(formula = mpg ~ am, xformula = ~hp + wt, data = mtcars)
     ------------------------------------------------------------------
-     Regression Adjustment Estimator:
+     Regression Adjustment Estimator for the ATE:
 
      Identification: Unconfoundedness (Selection on Observables)
 
-         ATT       Std. Error  t value     Pr(>|t|)  [95% Conf. Interval]
+         ATE       Std. Error  t value     Pr(>|t|)  [95% Conf. Interval]
         -0.7432       1.1387    -0.653       0.5140     -2.9750     1.4886
     ------------------------------------------------------------------
      Sample size: N = 32
@@ -159,7 +159,7 @@ summary(result_ate)
     reg_adj_ate(formula = mpg ~ am, xformula = ~hp + wt, data = mtcars)
 
     ==================================================================
-     Regression Adjustment Estimator for the ATT
+     Regression Adjustment Estimator for the ATE
     ==================================================================
 
     Identification Assumption:
@@ -169,7 +169,7 @@ summary(result_ate)
     ------------------------------------------------------------------
     Estimate:
     ------------------------------------------------------------------
-      ATT estimate:           -0.7432
+      ATE estimate:           -0.7432
       Standard error:          1.1387
       t-statistic:             -0.653
       p-value:                 0.5140
