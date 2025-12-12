@@ -1,9 +1,10 @@
 #' Regression Adjustment Estimation for Binary Treatment Effects (ATE)
 #'
 #' Estimates the average treatment effect (ATE) using regression adjustment
-#' under unconfoundedness. Outcome regression is estimated on the control group
-#' and used to predict counterfactual outcomes for both treated and control
-#' units, averaging appropriately.
+#' under unconfoundedness. Outcome regression is estimated separately for the
+#' treated and control groups, and counterfactual outcomes are predicted for
+#' the full sample from each model. The ATE is the average difference between
+#' these predicted potential outcomes.
 #'
 #' @param formula A formula specifying the outcome and treatment variables in the
 #'   form \code{Y ~ D}, where \code{Y} is the outcome variable and \code{D} is
@@ -41,27 +42,55 @@ reg_adj_ate <- function(formula, xformula = NULL, data) {
         xmf <- model.frame(xformula, data = data, na.action = na.omit)
         X <- model.matrix(xformula, data = xmf)
         covariate_names <- colnames(X)
+
+        if (nrow(xmf) != nrow(mf)) {
+            warning("Missing values in covariates resulted in different sample sizes. Using complete cases only.")
+            combined_data <- data[rownames(mf), ]
+            xmf <- model.frame(xformula, data = combined_data, na.action = na.omit)
+            X <- model.matrix(xformula, data = xmf)
+            Y <- Y[rownames(xmf)]
+            D <- D[as.numeric(rownames(xmf))]
+        }
     }
+
     n <- length(Y)
-    # Outcome regression on controls
+    n_treated <- sum(D == 1)
+    n_control <- sum(D == 0)
+    if (n_treated < 2 || n_control < 2) stop("Need at least 2 observations in both treatment and control groups")
+
+    # Separate outcome regressions
+    Xt <- X[D == 1, , drop = FALSE]
+    Yt <- Y[D == 1]
     Xc <- X[D == 0, , drop = FALSE]
     Yc <- Y[D == 0]
-    XtX <- crossprod(Xc)
-    XtY <- crossprod(Xc, Yc)
-    beta_hat <- solve(XtX, XtY)
-    # Predict for all
-    yhat_all <- as.vector(X %*% beta_hat)
-    # ATE = E[Y(1)-Y(0)] approximated by E[Y - yhat] over treated minus control weights
-    # Here use RA form: ATE = mean( (D*(Y - yhat)) / p + ((1-D)*(yhat - Y)) / (1-p) )
+
+    beta1 <- solve(crossprod(Xt), crossprod(Xt, Yt))
+    beta0 <- solve(crossprod(Xc), crossprod(Xc, Yc))
+
+    m1_hat <- as.vector(X %*% beta1)
+    m0_hat <- as.vector(X %*% beta0)
+
+    ATE_hat <- mean(m1_hat - m0_hat)
+
     p <- mean(D)
-    ATE_manual <- mean(D * (Y - yhat_all) / p + (1 - D) * (yhat_all - Y) / (1 - p))
-    # Use DRDID to get SE via panel RA (with y0=0) is not exact for ATE; fallback to sample variance of IF from RA formula
-    psi <- D * (Y - yhat_all) / p + (1 - D) * (yhat_all - Y) / (1 - p)
+    if (p <= 0 || p >= 1) stop("Treatment share must be in (0,1)")
+
+    # Influence function for RA ATE with estimated outcome models
+    psi <- m1_hat - m0_hat - ATE_hat + D * (Y - m1_hat) / p - (1 - D) * (Y - m0_hat) / (1 - p)
     se <- sqrt(var(psi) / n)
     z <- qnorm(0.975)
-    uci <- ATE_manual + z * se
-    lci <- ATE_manual - z * se
-    out <- list(ATT = ATE_manual, se = se, uci = uci, lci = lci, boots = NULL, att.inf.func = psi, call.param = call, argu = list(type = "or", panel = FALSE))
+    uci <- ATE_hat + z * se
+    lci <- ATE_hat - z * se
+    out <- list(
+        ATT = ATE_hat,
+        se = se,
+        uci = uci,
+        lci = lci,
+        boots = NULL,
+        att.inf.func = psi,
+        call.param = call,
+        argu = list(type = "or", panel = FALSE)
+    )
     out$formula <- formula
     out$xformula <- xformula
     out$covariate_names <- covariate_names

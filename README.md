@@ -139,7 +139,7 @@ print(result_ate)
      Identification: Unconfoundedness (Selection on Observables)
 
          ATT       Std. Error  t value     Pr(>|t|)  [95% Conf. Interval]
-         3.3566       1.2236     2.743       0.0061      0.9584     5.7548
+        -0.7432       1.1387    -0.653       0.5140     -2.9750     1.4886
     ------------------------------------------------------------------
      Sample size: N = 32
      Treated units: 13
@@ -169,11 +169,11 @@ summary(result_ate)
     ------------------------------------------------------------------
     Estimate:
     ------------------------------------------------------------------
-      ATT estimate:            3.3566
-      Standard error:          1.2236
-      t-statistic:              2.743
-      p-value:                 0.0061
-      95% CI:              [   0.9584,    5.7548]
+      ATT estimate:           -0.7432
+      Standard error:          1.1387
+      t-statistic:             -0.653
+      p-value:                 0.5140
+      95% CI:              [  -2.9750,    1.4886]
 
     ------------------------------------------------------------------
     Sample:
